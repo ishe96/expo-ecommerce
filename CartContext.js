@@ -29,18 +29,55 @@ export function CartProvider(props) {
                         item.qty++;
                         item.totalPrice += product.price;
                     }
-                    return item
+                    return item;
+                });
+            }
+        });
+    }
+
+    function removeItemToCart(id) {
+        const product = getProduct(id);
+
+        setItems((prevItems) => {
+            const item = prevItems.find((item) => item.id == id);
+
+            if (item) {
+                return [
+                    ...prevItems,
+                    {
+                        id,
+                        qty: -1,
+                        product,
+                        totalPrice: -product.price,
+                    },
+                ];
+            } 
+            else {
+                return prevItems.map((item) => {
+                    if (item.id == id) {
+                        item.qty-1;
+                        item.totalPrice -= product.price;
+                    }
+                    return item;
                 });
             }
         });
     }
 
     function getItemsCount() {
-        return items.reduce((sum, item) => (sum + item.qty), 0);
+        if (removeItemToCart) {
+            return items.reduce((sum, item) => sum + item.qty, 0);
+        } else {
+            return items.reduce((sum, item) => sum + item.qty, 0);
+        }
     }
 
     function getTotalPrice() {
-        return items.reduce((sum, item) => (sum + item.totalPrice), 0);
+        if (removeItemToCart) {
+            return items.reduce((sum, item) => sum + item.totalPrice, 0);
+        } else {
+            return items.reduce((sum, item) => sum + item.totalPrice, 0);
+        }
     }
 
     return (
@@ -50,6 +87,7 @@ export function CartProvider(props) {
                 setItems,
                 getItemsCount,
                 addItemToCart,
+                removeItemToCart,
                 getTotalPrice,
             }}
         >
